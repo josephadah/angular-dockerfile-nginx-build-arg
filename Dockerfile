@@ -4,6 +4,9 @@ FROM node:14 as build
 # set working directory
 WORKDIR /app
 
+ARG SERVER_ENV
+ENV SERVER_ENV=$SERVER_ENV
+
 # install dependencies
 COPY package.json .
 RUN npm install
@@ -12,8 +15,9 @@ RUN npm install
 COPY . .
 
 # generate build
-RUN npm run build-staging --output-path=dist
+RUN npm run build-$SERVER_ENV --output-path=dist
 
+### STAGE 2:RUN ###
 # Defining nginx image to be used
 FROM nginx:1.16.0-alpine AS ngi
 # Copying compiled code and nginx config to different folder
